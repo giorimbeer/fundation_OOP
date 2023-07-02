@@ -9,9 +9,11 @@ public class SpwnEnemies : MonoBehaviour
 
     private void Update()
     {
+        //look for enemies in the scene if it don't have any invoke one enemy
         if (GameObject.FindGameObjectWithTag("Enemy") == null) StartCoroutine(WaitSpawn());
     }
 
+    //for invoke a enemy
     private void Invoke()
     {
         int random = Random.Range(0, enemies.Length);
@@ -20,6 +22,7 @@ public class SpwnEnemies : MonoBehaviour
 
     }
 
+    //for wait a moment before invoke a enemy
     IEnumerator WaitSpawn()
     {
         yield return new WaitForSeconds(1);
