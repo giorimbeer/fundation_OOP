@@ -4,6 +4,8 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System.Runtime.Serialization;
+using System;
+using Unity.VisualScripting;
 
 public class Player : MonoBehaviour
 {
@@ -35,6 +37,8 @@ public class Player : MonoBehaviour
     public TextMeshProUGUI livePlayerText;
 
 
+    public bool readDamageEnemy = true;
+
     int damageEnemy;
 
     int damagePlayer = 2;
@@ -45,19 +49,6 @@ public class Player : MonoBehaviour
     {
         actualLive = live;
         actionsPlayerText.enabled = false;
-    }
-
-    private void Awake()
-    {
-        //if (GameObject.FindGameObjectWithTag("Enemy").GetComponent<Enemy1>() != null) enemy = GameObject.FindGameObjectWithTag("Enemy").GetComponent<Enemy1>();
-        //else if(GameObject.FindGameObjectWithTag("Enemy").GetComponent<Enemy2>() != null) enemy = GameObject.FindGameObjectWithTag("Enemy").GetComponent<Enemy2>();
-        //else if (GameObject.FindGameObjectWithTag("Enemy").GetComponent<Enemy3>() != null) enemy = GameObject.FindGameObjectWithTag("Enemy").GetComponent<Enemy3>();
-        //else enemy = GameObject.FindGameObjectWithTag("Enemy").GetComponent<Enemy>();
-
-        enemy = GameObject.FindGameObjectWithTag("Enemy").GetComponent<Enemy>();
-
-        damageEnemy = enemy.damage;
-        
     }
 
     private void Update()
@@ -73,27 +64,29 @@ public class Player : MonoBehaviour
             StartCoroutine(SpawnText());
             StartCoroutine(WaitHeal(30));
             actualLive += heal;
-            print(enemy.actualLive);
+           
         }
         
     }
 
     public void Atack()
-    {       
+    {
+        if(enemy == null)  enemy = GameObject.FindGameObjectWithTag("Enemy").GetComponent<Enemy>();
+
+        if (readDamageEnemy) damageEnemy = enemy.damage;
+
         if (canAtack) 
         {
             actionsPlayerText.text = "damage made: " + damagePlayer;
             StartCoroutine(SpawnText());
             enemy.actualLive -= damagePlayer;
             StartCoroutine(WaitAtack(3.5f));
-            print(enemy.actualLive);
         }       
     }
 
     public void Doge()
-    {
-       
-        int damageEnemyBackup = damageEnemy;
+    {       
+        int damageEnemyBackup = EnemyDamage();
 
         if (canDoge)
         {
@@ -104,15 +97,26 @@ public class Player : MonoBehaviour
 
     public void Block()
     {
-        
-        int damageEnemyBackup = damageEnemy;
+        int damageEnemyBackup = EnemyDamage();
 
         if (canBlock)
         {
             StartCoroutine(WaitBlock(5));
             StartCoroutine(Action( damageEnemyBackup / 3));
-
         }
+    }
+
+    int EnemyDamage()
+    {
+        if (enemy == null)
+        {
+            enemy = GameObject.FindGameObjectWithTag("Enemy").GetComponent<Enemy>();
+            damageEnemy = enemy.damage;
+            readDamageEnemy = false;
+            return damageEnemy;
+        }
+        else 
+            return damageEnemy;
     }
 
     //IEnumerator Count(int wait, TextMeshProUGUI text)
@@ -145,12 +149,10 @@ public class Player : MonoBehaviour
     }
 
     IEnumerator Action(int num)
-    {
+    {      
         enemy.damage = num;
         print(enemy.damage);
-
         yield return new WaitForSeconds(3);
-
         enemy.damage = damageEnemy;
         print(enemy.damage);
     }

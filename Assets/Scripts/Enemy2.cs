@@ -20,13 +20,11 @@ public class Enemy2 : Enemy
     {
         if(actualLive <= 0)
         {
+            base.Death();
+
             text.text = "daño sufrido " + damage * 2; 
             player.actualLive -= damage * 2;
-            StartCoroutine(SpawnText());
-            Destroy(gameObject);
-        }
-       
-    }
-
-    
+            text.enabled = true;
+        }  
+    }  
 }

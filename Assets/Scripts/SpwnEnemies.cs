@@ -9,30 +9,21 @@ public class SpwnEnemies : MonoBehaviour
 
     private void Update()
     {
-        if (GameObject.FindGameObjectWithTag("Enemy") == null) Invoke();
+        if (GameObject.FindGameObjectWithTag("Enemy") == null) StartCoroutine(WaitSpawn());
     }
 
     private void Invoke()
     {
         int random = Random.Range(0, enemies.Length);
 
-        StartCoroutine(Wait(random));
-
         Instantiate(enemies[random]);
+
     }
 
     IEnumerator WaitSpawn()
     {
-        if (GameObject.FindGameObjectWithTag("Enemy") == null) Invoke();
         yield return new WaitForSeconds(1);
-    }
-    IEnumerator Wait(int i) 
-    {
-        player.SetActive(false);
-        enemies[i].SetActive(false);
-        yield return new WaitForSeconds(0.1f);
-        player.SetActive(true);
-        enemies[i].SetActive(true);
+        if (GameObject.FindGameObjectWithTag("Enemy") == null)  Invoke();
     }
     
 }

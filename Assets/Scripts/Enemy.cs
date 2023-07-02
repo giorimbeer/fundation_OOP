@@ -49,7 +49,7 @@ public class Enemy : MonoBehaviour
     protected bool canShow = false;
 
     
-    private void Awake()
+    private void Start()
     {
         actualLive = backupLive;
 
@@ -57,13 +57,11 @@ public class Enemy : MonoBehaviour
 
         liveText = GameObject.Find("TextEnemiesLive").GetComponent<TextMeshProUGUI>();
 
-        try{
-            player = GameObject.Find("Player").transform.GetComponent<Player>();
-        }catch(Exception e)
-        {
-            print(e.ToString());
-        }
+        
+        player = GameObject.Find("Player").transform.GetComponent<Player>();
 
+        text.enabled = false;
+        
     }
 
     private void Update()
@@ -82,6 +80,7 @@ public class Enemy : MonoBehaviour
 
     public virtual void Action()
     {
+
         StartCoroutine(SpawnText());
         StartCoroutine(CoolDown());
     }
@@ -90,8 +89,10 @@ public class Enemy : MonoBehaviour
     {
         if (actualLive <= 0)
         {
-
+            player.readDamageEnemy = true;
             Destroy(gameObject);
+            actualLive = live;
+            text.enabled = false;
         }
     }
 
